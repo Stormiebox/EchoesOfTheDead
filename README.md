@@ -10,6 +10,8 @@ Immerse yourself even further into the harrowing world of Project Zomboid with t
 
 - **Eerie Scream Effects:** Each time you defeat a zombie, there's a potential for a chilling scream to emanate, amplifying the desolation around you.
   
+- **True-to-Source Audio & Distractions:** Screams originate directly from the fallen zombie's exact location rather than the player. This ensures realistic 3D spatial audio and correctly lures nearby hordes toward the kill site instead of you!
+
 - **Variety of Versions:** Tailor the frequency of these eerie echoes based on your preference:
   - **Common**: 8% chance for a scream.
   - **Uncommon**: 5% chance for a scream.
@@ -34,6 +36,10 @@ Immerse yourself even further into the harrowing world of Project Zomboid with t
 ## Contribute
 
 Your feedback propels this mod forward! Encountered an issue or have an innovative idea? Please submit a ticket. If you're inclined to actively contribute, fork our repository and introduce your pull request.
+
+## Support
+
+Love the eerie ambiance the mod adds? Consider showing your appreciation by [buying me a coffee](https://ko-fi.com/stormboxoriginal).
 
 ## License
 
