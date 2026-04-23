@@ -31,57 +31,33 @@ local zombieSounds = {
 
 -- Fetch the sandbox setting for scream chance
 local function getScreamChance()
-    return SandboxVars.EchoesOfTheDead.ScreamChance or 5 -- Default to 5% if the sandbox setting is not found
-end
-
-local function PlayEchoSoundForPlayer(player)
-    local playerLocation = player:getCurrentSquare()
-    local screamChanceRoll = ZombRand(1, 100)
-    local screamLoudness = ZombRand(50, 110)
-    local screamDistance = ZombRand(70, 250)
-
-    -- Use the sandbox setting for scream chance
-    if screamChanceRoll <= getScreamChance() then
-        local soundToPlay = zombieSounds[ZombRand(1, #zombieSounds)]
-
-        -- Checking if player has a valid emitter before playing sound
-        local emitter = player:getEmitter()
-        if emitter then
-            emitter:playSound(soundToPlay)
-
-            if playerLocation then
-                getWorldSoundManager():addSound(player, playerLocation:getX(), playerLocation:getY(),
-                    playerLocation:getZ(), screamDistance, screamLoudness)
-            else
-                print("Failed to get player's current square.")
-            end
-        else
-            print("Failed to get emitter for player.")
-        end
+    if SandboxVars.EchoesOfTheDead and SandboxVars.EchoesOfTheDead.ScreamChance then
+        return SandboxVars.EchoesOfTheDead.ScreamChance
     end
+    return 5 -- Default to 5% if the sandbox setting is not found
 end
 
 local function EchoesOfTheDead(zombie)
-    local onlinePlayers = getOnlinePlayers()
-    if onlinePlayers and onlinePlayers:size() > 0 then -- Multiplayer mode
-        for i = 0, onlinePlayers:size() - 1 do
-            local player = onlinePlayers:get(i)
-            if player then
-                PlayEchoSoundForPlayer(player)
-            else
-                print("Warning: Player at index " .. i .. " is null!")
-            end
+    if not zombie then return end
+
+    local screamChanceRoll = ZombRand(1, 101)
+    local screamLoudness = ZombRand(50, 111)
+    local screamDistance = ZombRand(70, 251)
+
+    if screamChanceRoll <= getScreamChance() then
+        local soundToPlay = zombieSounds[ZombRand(#zombieSounds) + 1]
+
+        local emitter = zombie:getEmitter()
+        if emitter then
+            emitter:playSound(soundToPlay)
         end
-    else                                    -- Singleplayer mode
-        local player = getSpecificPlayer(0) -- Singleplayer character is always at index 0
-        if player then
-            PlayEchoSoundForPlayer(player)
-        else
-            print("Error: Singleplayer character not found!")
+
+        local zombieLocation = zombie:getCurrentSquare()
+        if zombieLocation then
+            getWorldSoundManager():addSound(zombie, zombieLocation:getX(), zombieLocation:getY(),
+                zombieLocation:getZ(), screamDistance, screamLoudness)
         end
     end
 end
 
-Events.OnInitGlobalModData.Add(getScreamChance)     -- Ensure that sandbox settings are initialized early enough
-Events.OnServerStarted.Add(getScreamChance)     -- This ensures multiplayer server start handling
 Events.OnZombieDead.Add(EchoesOfTheDead)    -- Ensures the entire script works as intended upon zombie death

@@ -29,49 +29,25 @@ local zombieSounds = {
     "EchoScream6", "EchoScream7", "EchoScream8", "EchoScream9", "EchoScream10", "EchoScream11", "EchoScream12"
 }
 
-local function PlayEchoSoundForPlayer(player)
-    local playerLocation = player:getCurrentSquare()
-    local screamChanceRoll = ZombRand(1, 100)
-    local screamLoudness = ZombRand(50, 110)
-    local screamDistance = ZombRand(70, 250)
+local function EchoesOfTheDead(zombie)
+    if not zombie then return end
+
+    local screamChanceRoll = ZombRand(1, 101)
+    local screamLoudness = ZombRand(50, 111)
+    local screamDistance = ZombRand(70, 251)
 
     if screamChanceRoll <= 8 then
-        local soundToPlay = zombieSounds[ZombRand(1, #zombieSounds)]
+        local soundToPlay = zombieSounds[ZombRand(#zombieSounds) + 1]
 
-        -- Checking if player has a valid emitter before playing sound
-        local emitter = player:getEmitter()
+        local emitter = zombie:getEmitter()
         if emitter then
             emitter:playSound(soundToPlay)
-
-            if playerLocation then
-                getWorldSoundManager():addSound(player, playerLocation:getX(), playerLocation:getY(),
-                    playerLocation:getZ(), screamDistance, screamLoudness)
-            else
-                print("Failed to get player's current square.")
-            end
-        else
-            print("Failed to get emitter for player.")
         end
-    end
-end
 
-local function EchoesOfTheDead(zombie)
-    local onlinePlayers = getOnlinePlayers()
-    if onlinePlayers and onlinePlayers:size() > 0 then -- Multiplayer mode
-        for i = 0, onlinePlayers:size() - 1 do
-            local player = onlinePlayers:get(i)
-            if player then
-                PlayEchoSoundForPlayer(player)
-            else
-                print("Warning: Player at index " .. i .. " is null!")
-            end
-        end
-    else                                    -- Singleplayer mode
-        local player = getSpecificPlayer(0) -- Singleplayer character is always at index 0
-        if player then
-            PlayEchoSoundForPlayer(player)
-        else
-            print("Error: Singleplayer character not found!")
+        local zombieLocation = zombie:getCurrentSquare()
+        if zombieLocation then
+            getWorldSoundManager():addSound(zombie, zombieLocation:getX(), zombieLocation:getY(),
+                zombieLocation:getZ(), screamDistance, screamLoudness)
         end
     end
 end
