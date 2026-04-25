@@ -45,9 +45,16 @@ local function EchoesOfTheDead(zombie)
         end
 
         local zombieLocation = zombie:getCurrentSquare()
-        if zombieLocation then
-            getWorldSoundManager():addSound(zombie, zombieLocation:getX(), zombieLocation:getY(),
-                zombieLocation:getZ(), screamDistance, screamLoudness)
+        local worldSoundManager = getWorldSoundManager and getWorldSoundManager()
+        if zombieLocation and worldSoundManager then
+            worldSoundManager:addSound(
+                zombie,
+                zombieLocation:getX(),
+                zombieLocation:getY(),
+                zombieLocation:getZ(),
+                screamDistance,
+                screamLoudness
+            )
         end
     end
 end

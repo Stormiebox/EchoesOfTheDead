@@ -31,8 +31,8 @@ local zombieSounds = {
 
 -- Fetch the sandbox setting for scream chance
 local function getScreamChance()
-    if SandboxVars.EchoesOfTheDead and SandboxVars.EchoesOfTheDead.ScreamChance then
-        return SandboxVars.EchoesOfTheDead.ScreamChance
+    if SandboxVars and SandboxVars.EchoesOfTheDead and SandboxVars.EchoesOfTheDead.ScreamChance then
+        return tonumber(SandboxVars.EchoesOfTheDead.ScreamChance) or 5
     end
     return 5 -- Default to 5% if the sandbox setting is not found
 end
@@ -53,9 +53,16 @@ local function EchoesOfTheDead(zombie)
         end
 
         local zombieLocation = zombie:getCurrentSquare()
-        if zombieLocation then
-            getWorldSoundManager():addSound(zombie, zombieLocation:getX(), zombieLocation:getY(),
-                zombieLocation:getZ(), screamDistance, screamLoudness)
+        local worldSoundManager = getWorldSoundManager and getWorldSoundManager()
+        if zombieLocation and worldSoundManager then
+            worldSoundManager:addSound(
+                zombie,
+                zombieLocation:getX(),
+                zombieLocation:getY(),
+                zombieLocation:getZ(),
+                screamDistance,
+                screamLoudness
+            )
         end
     end
 end

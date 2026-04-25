@@ -30,48 +30,51 @@ local zombieSounds = {
 }
 
 local function PlayEchoSoundForPlayer(player)
+    if not player then
+        return
+    end
+
     local playerLocation = player:getCurrentSquare()
-    local screamChanceRoll = ZombRand(1, 100)
-    local screamLoudness = ZombRand(50, 110)
-    local screamDistance = ZombRand(70, 250)
+    local screamChanceRoll = ZombRand(1, 101)
+    local screamLoudness = ZombRand(50, 111)
+    local screamDistance = ZombRand(70, 251)
 
     if screamChanceRoll <= 3 then
-        local soundToPlay = zombieSounds[ZombRand(1, #zombieSounds)]
+        local soundToPlay = zombieSounds[ZombRand(#zombieSounds) + 1]
 
         -- Checking if player has a valid emitter before playing sound
         local emitter = player:getEmitter()
         if emitter then
             emitter:playSound(soundToPlay)
+        end
 
-            if playerLocation then
-                getWorldSoundManager():addSound(player, playerLocation:getX(), playerLocation:getY(),
-                    playerLocation:getZ(), screamDistance, screamLoudness)
-            else
-                print("Failed to get player's current square.")
-            end
-        else
-            print("Failed to get emitter for player.")
+        local worldSoundManager = getWorldSoundManager and getWorldSoundManager()
+        if playerLocation and worldSoundManager then
+            worldSoundManager:addSound(
+                player,
+                playerLocation:getX(),
+                playerLocation:getY(),
+                playerLocation:getZ(),
+                screamDistance,
+                screamLoudness
+            )
         end
     end
 end
 
 local function EchoesOfTheDead(zombie)
-    local onlinePlayers = getOnlinePlayers()
+    local onlinePlayers = getOnlinePlayers and getOnlinePlayers() or nil
     if onlinePlayers and onlinePlayers:size() > 0 then -- Multiplayer mode
         for i = 0, onlinePlayers:size() - 1 do
             local player = onlinePlayers:get(i)
             if player then
                 PlayEchoSoundForPlayer(player)
-            else
-                print("Warning: Player at index " .. i .. " is null!")
             end
         end
-    else                                    -- Singleplayer mode
-        local player = getSpecificPlayer(0) -- Singleplayer character is always at index 0
+    else -- Singleplayer mode
+        local player = getSpecificPlayer and getSpecificPlayer(0) or nil
         if player then
             PlayEchoSoundForPlayer(player)
-        else
-            print("Error: Singleplayer character not found!")
         end
     end
 end
